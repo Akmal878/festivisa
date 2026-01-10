@@ -1,0 +1,297 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Teal Theme - Clean & Modern */
+    --background: 176 50% 96%;
+    --foreground: 220 20% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 20% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 20% 15%;
+
+    /* Primary: Teal #9accc9 */
+    --primary: 176 33% 70%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary: Darker Teal */
+    --secondary: 176 40% 55%;
+    --secondary-foreground: 0 0% 100%;
+
+    /* Muted: Light Teal */
+    --muted: 176 45% 92%;
+    --muted-foreground: 220 15% 30%;
+
+    /* Accent: Deep Teal */
+    --accent: 176 45% 60%;
+    --accent-foreground: 0 0% 100%;
+
+    /* Destructive */
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 176 40% 82%;
+    --input: 0 0% 100%;
+    --ring: 176 33% 70%;
+
+    --radius: 0.75rem;
+
+    /* Custom teal variations */
+    --teal: 176 33% 70%;
+    --teal-light: 176 40% 80%;
+    --teal-lighter: 176 45% 88%;
+    --teal-dark: 176 35% 58%;
+    --teal-darker: 176 40% 45%;
+    
+    --cream: 40 40% 96%;
+    --charcoal: 220 20% 15%;
+    --warm-white: 0 0% 100%;
+    
+    /* Teal Gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(176 50% 85%) 0%, hsl(176 40% 75%) 50%, hsl(176 35% 65%) 100%);
+    --gradient-card: linear-gradient(180deg, rgba(154, 204, 201, 0.05) 0%, rgba(154, 204, 201, 0.15) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(176 33% 70%) 0%, hsl(176 45% 60%) 100%);
+    --gradient-gold: linear-gradient(135deg, hsl(176 33% 70%) 0%, hsl(176 45% 60%) 100%);
+    --gradient-teal: linear-gradient(135deg, hsl(176 40% 72%) 0%, hsl(176 35% 58%) 100%);
+    --gradient-mixed: linear-gradient(135deg, hsl(176 45% 78%) 0%, hsl(176 35% 68%) 50%, hsl(176 33% 70%) 100%);
+    --gradient-soft: linear-gradient(180deg, hsl(176 50% 90%) 0%, hsl(176 45% 85%) 100%);
+
+    /* Shadows with teal tints */
+    --shadow-soft: 0 4px 20px -4px hsl(176 33% 70% / 0.2);
+    --shadow-medium: 0 8px 30px -8px hsl(176 33% 70% / 0.3);
+    --shadow-strong: 0 12px 40px -8px hsl(176 33% 70% / 0.35);
+    --shadow-glow: 0 0 50px hsl(176 33% 70% / 0.4);
+
+    --sidebar-background: 176 50% 94%;
+    --sidebar-foreground: 220 20% 15%;
+    --sidebar-primary: 176 33% 70%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 176 45% 85%;
+    --sidebar-accent-foreground: 220 20% 15%;
+    --sidebar-border: 176 40% 80%;
+    --sidebar-ring: 176 33% 70%;
+  }
+
+  .dark {
+    --background: 176 10% 10%;
+    --foreground: 176 20% 95%;
+
+    --card: 176 8% 12%;
+    --card-foreground: 176 20% 95%;
+
+    --popover: 176 8% 12%;
+    --popover-foreground: 176 20% 95%;
+
+    --primary: 176 33% 65%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 350 65% 60%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 176 10% 18%;
+    --muted-foreground: 176 10% 60%;
+
+    --accent: 176 40% 50%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 176 20% 95%;
+
+    --border: 30 10% 20%;
+    --input: 30 10% 20%;
+    --ring: 38 92% 55%;
+
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif;
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: 'Playfair Display', serif;
+  }
+
+  .font-body {
+    font-family: 'Inter', sans-serif;
+  }
+
+  .gradient-hero {
+    background: var(--gradient-hero);
+  }
+
+  .gradient-card {
+    background: var(--gradient-card);
+  }
+
+  .gradient-accent {
+    background: var(--gradient-accent);
+  }
+
+  .gradient-gold {
+    background: var(--gradient-gold);
+  }
+
+  .gradient-teal {
+    background: var(--gradient-teal);
+  }
+
+  .gradient-mixed {
+    background: var(--gradient-mixed);
+  }
+
+  .gradient-soft {
+    background: var(--gradient-soft);
+  }
+
+  .shadow-soft {
+    box-shadow: var(--shadow-soft);
+  }
+
+  .shadow-medium {
+    box-shadow: var(--shadow-medium);
+  }
+
+  .shadow-strong {
+    box-shadow: var(--shadow-strong);
+  }
+
+  .shadow-glow {
+    box-shadow: var(--shadow-glow);
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 100%);
+  }
+
+  .text-gradient-teal {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(176 33% 70%) 0%, hsl(176 40% 55%) 100%);
+  }
+}
+
+@layer components {
+  .btn-wedding {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-primary px-8 py-3 text-sm font-medium text-primary-foreground transition-all duration-300 hover:shadow-glow hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50;
+  }
+
+  .btn-gold {
+    @apply inline-flex items-center justify-center gap-2 rounded-full gradient-gold px-8 py-4 text-base font-semibold text-charcoal transition-all duration-300 hover:shadow-glow hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50;
+  }
+
+  .btn-outline-gold {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border-2 border-primary bg-transparent px-8 py-4 text-base font-semibold text-primary transition-all duration-300 hover:bg-primary hover:text-white hover:shadow-glow hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50;
+  }
+
+  .card-wedding {
+    @apply rounded-2xl bg-card p-6 shadow-medium transition-all duration-300 hover:shadow-strong hover:scale-[1.02];
+  }
+
+  .input-wedding {
+    @apply w-full rounded-lg border-2 border-border bg-background px-4 py-3 text-foreground transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring;
+  }
+}
+
+/* Animations */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scale-up {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s ease-out forwards;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.8s ease-out forwards;
+}
+
+.animate-scale-up {
+  animation: scale-up 0.6s ease-out forwards;
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.1), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* Staggered animations */
+.stagger-1 { animation-delay: 0.1s; }
+.stagger-2 { animation-delay: 0.2s; }
+.stagger-3 { animation-delay: 0.3s; }
+.stagger-4 { animation-delay: 0.4s; }
+.stagger-5 { animation-delay: 0.5s; }
+
+/* Hero slider specific */
+.hero-slide {
+  @apply relative w-full h-full;
+}
+
+.hero-overlay {
+  @apply absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/20;
+}
