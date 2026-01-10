@@ -14,7 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useAuth } from '@/lib/auth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Building2, Upload, Plus, X, Image, MapPin } from 'lucide-react';
+import { Loader2, Building2, Upload, Plus, X, Image, MapPin, Car } from 'lucide-react';
 
 // Pakistan cities
 const pakistanCities = [
@@ -92,6 +92,8 @@ export default function AddHotel() {
   const [videoFiles, setVideoFiles] = useState<File[]>([]);
   const [videoPreviews, setVideoPreviews] = useState<string[]>([]);
   const [selectedCity, setSelectedCity] = useState<string>('');
+  const [mapLocation, setMapLocation] = useState<string>('');
+  const [parkingCapacity, setParkingCapacity] = useState<string>('');
   const [halls, setHalls] = useState<Hall[]>([{ name: '', capacity: 100, description: '', price_per_event: 0 }]);
   const [menuBundles, setMenuBundles] = useState<MenuBundle[]>([{
     name: '',
@@ -384,6 +386,8 @@ export default function AddHotel() {
         image_url: imageUrls[0] || null,
         image_urls: imageUrls.length > 0 ? imageUrls : null,
         video_urls: videoUrls.length > 0 ? videoUrls : null,
+        map_location: mapLocation || null,
+        parking_capacity: parkingCapacity ? parseInt(parkingCapacity) : null,
       })
       .select()
       .single();
@@ -654,6 +658,40 @@ export default function AddHotel() {
                     <p className="text-sm text-destructive">{form.formState.errors.city.message}</p>
                   )}
                 </div>
+              </div>
+
+              {/* Google Maps Location */}
+              <div className="space-y-2">
+                <Label htmlFor="map_location">Google Maps Location (Optional)</Label>
+                <Input
+                  id="map_location"
+                  placeholder="Paste Google Maps link or coordinates"
+                  className="input-wedding"
+                  value={mapLocation}
+                  onChange={(e) => setMapLocation(e.target.value)}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Share your Google Maps location link for easy navigation
+                </p>
+              </div>
+
+              {/* Parking Capacity */}
+              <div className="space-y-2">
+                <Label htmlFor="parking_capacity">
+                  <Car className="w-4 h-4 inline mr-2" />
+                  Parking Capacity (Number of Cars)
+                </Label>
+                <Input
+                  id="parking_capacity"
+                  type="number"
+                  placeholder="e.g., 50"
+                  className="input-wedding"
+                  value={parkingCapacity}
+                  onChange={(e) => setParkingCapacity(e.target.value)}
+                />
+                <p className="text-xs text-muted-foreground">
+                  How many cars can be parked at your venue?
+                </p>
               </div>
 
               {/* Halls Section */}
