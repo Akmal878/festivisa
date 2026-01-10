@@ -172,10 +172,10 @@ export default function Profile() {
 
   return (
     <Layout>
-      <div className="container mx-auto px-4 py-24">
+      <div className="container mx-auto px-4 py-12 sm:py-16 md:py-24">
         <div className="max-w-2xl mx-auto">
-          <div className="mb-8">
-            <h1 className="text-3xl md:text-4xl font-display font-bold mb-2">My Profile</h1>
+          <div className="mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold mb-2">My Profile</h1>
             <p className="text-muted-foreground">
               View and update your profile information
             </p>
@@ -233,7 +233,7 @@ export default function Profile() {
               </div>
 
               {/* Phone and City in one row */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                 {/* Phone */}
                 <div className="space-y-2">
                   <Label htmlFor="phone" className="flex items-center gap-2">

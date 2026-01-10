@@ -465,13 +465,13 @@ export default function AddHotel() {
 
   return (
     <Layout>
-      <div className="min-h-screen gradient-hero py-12">
-        <div className="container mx-auto px-4 max-w-2xl">
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
-              <Building2 className="w-8 h-8 text-primary" />
+      <div className="min-h-screen gradient-hero py-8 sm:py-12">
+        <div className="container mx-auto px-4 sm:px-6 max-w-3xl">
+          <div className="text-center mb-6 sm:mb-8">
+            <div className="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-primary/10 mb-3 sm:mb-4">
+              <Building2 className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
             </div>
-            <h1 className="font-display text-4xl font-semibold text-foreground mb-2">
+            <h1 className="font-display text-3xl sm:text-4xl font-semibold text-foreground mb-2">
               Add Your Hotel
             </h1>
             <p className="text-muted-foreground">
@@ -486,10 +486,10 @@ export default function AddHotel() {
                 <Label>Hotel Images (Up to 20)</Label>
                 <div
                   onClick={() => imageFiles.length < 20 && fileInputRef.current?.click()}
-                  className="border-2 border-dashed border-muted rounded-xl p-8 text-center cursor-pointer hover:border-primary/50 transition-colors"
+                  className="border-2 border-dashed border-muted rounded-xl p-4 sm:p-8 text-center cursor-pointer hover:border-primary/50 transition-colors"
                 >
                   {imagePreviews.length > 0 ? (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3">
                       {imagePreviews.map((preview, index) => (
                         <div key={index} className="relative group">
                           <img
@@ -542,10 +542,10 @@ export default function AddHotel() {
                 <Label>Hotel Videos (Up to 3, max 30 seconds each)</Label>
                 <div
                   onClick={() => videoFiles.length < 3 && videoInputRef.current?.click()}
-                  className="border-2 border-dashed border-muted rounded-xl p-8 text-center cursor-pointer hover:border-primary/50 transition-colors"
+                  className="border-2 border-dashed border-muted rounded-xl p-4 sm:p-8 text-center cursor-pointer hover:border-primary/50 transition-colors"
                 >
                   {videoPreviews.length > 0 ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3">
                       {videoPreviews.map((preview, index) => (
                         <div key={index} className="relative group">
                           <video
@@ -619,7 +619,7 @@ export default function AddHotel() {
               </div>
 
               {/* Address and City */}
-              <div className="grid sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="address">Address</Label>
                   <Input
@@ -810,7 +810,7 @@ export default function AddHotel() {
                       </div>
                       
                       {/* Dropdowns for selecting dishes */}
-                      <div className="grid sm:grid-cols-2 gap-3">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
                           {!bundle.chicken_dish && (
                             <div className="space-y-2">

@@ -77,7 +77,7 @@ export function HeroSection() {
           {/* Title */}
           <h1 
             key={currentSlide}
-            className="font-display text-5xl md:text-6xl lg:text-7xl font-medium mb-6 animate-slide-up"
+            className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-medium mb-4 sm:mb-6 animate-slide-up"
           >
             {heroSlides[currentSlide].title}
           </h1>

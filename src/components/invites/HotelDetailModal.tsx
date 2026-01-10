@@ -198,7 +198,7 @@ export function HotelDetailModal({ hotelId, open, onOpenChange }: HotelDetailMod
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto w-[95vw] sm:w-full">
         {isLoading ? (
           <div className="flex items-center justify-center py-20">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -206,13 +206,13 @@ export function HotelDetailModal({ hotelId, open, onOpenChange }: HotelDetailMod
         ) : hotel ? (
           <>
             <DialogHeader>
-              <DialogTitle className="font-display text-2xl">{hotel.name}</DialogTitle>
+              <DialogTitle className="font-display text-xl sm:text-2xl">{hotel.name}</DialogTitle>
             </DialogHeader>
 
             {/* Image Gallery with Carousel */}
             {((hotel.image_urls && hotel.image_urls.length > 0) || hotel.image_url) && (
               <div className="space-y-3">
-                <h3 className="font-display text-lg font-semibold flex items-center gap-2">
+                <h3 className="font-display text-base sm:text-lg font-semibold flex items-center gap-2">
                   <ImageIcon className="w-5 h-5 text-primary" />
                   Venue Photos
                 </h3>
