@@ -6,98 +6,98 @@
 
 @layer base {
   :root {
-    /* Teal Theme - Clean & Modern */
-    --background: 176 50% 96%;
-    --foreground: 220 20% 15%;
+    /* Purple/Violet Theme - Elegant & Wedding */
+    --background: 270 30% 97%;
+    --foreground: 270 15% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 220 20% 15%;
+    --card-foreground: 270 15% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 20% 15%;
+    --popover-foreground: 270 15% 15%;
 
-    /* Primary: Teal #9accc9 */
-    --primary: 176 33% 70%;
+    /* Primary: Deep Purple/Violet #8b7fc7 */
+    --primary: 255 40% 62%;
     --primary-foreground: 0 0% 100%;
 
-    /* Secondary: Darker Teal */
-    --secondary: 176 40% 55%;
+    /* Secondary: Rose Gold */
+    --secondary: 340 60% 70%;
     --secondary-foreground: 0 0% 100%;
 
-    /* Muted: Light Teal */
-    --muted: 176 45% 92%;
-    --muted-foreground: 220 15% 30%;
+    /* Muted: Light Lavender */
+    --muted: 260 35% 93%;
+    --muted-foreground: 270 15% 35%;
 
-    /* Accent: Deep Teal */
-    --accent: 176 45% 60%;
+    /* Accent: Rich Purple */
+    --accent: 265 45% 58%;
     --accent-foreground: 0 0% 100%;
 
     /* Destructive */
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 176 40% 82%;
+    --border: 260 30% 85%;
     --input: 0 0% 100%;
-    --ring: 176 33% 70%;
+    --ring: 255 40% 62%;
 
     --radius: 0.75rem;
 
-    /* Custom teal variations */
-    --teal: 176 33% 70%;
-    --teal-light: 176 40% 80%;
-    --teal-lighter: 176 45% 88%;
-    --teal-dark: 176 35% 58%;
-    --teal-darker: 176 40% 45%;
+    /* Custom purple/violet variations */
+    --teal: 255 40% 62%;
+    --teal-light: 260 45% 75%;
+    --teal-lighter: 265 40% 88%;
+    --teal-dark: 255 45% 50%;
+    --teal-darker: 250 50% 40%;
     
-    --cream: 40 40% 96%;
-    --charcoal: 220 20% 15%;
+    --cream: 45 40% 96%;
+    --charcoal: 270 15% 15%;
     --warm-white: 0 0% 100%;
     
-    /* Teal Gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(176 50% 85%) 0%, hsl(176 40% 75%) 50%, hsl(176 35% 65%) 100%);
-    --gradient-card: linear-gradient(180deg, rgba(154, 204, 201, 0.05) 0%, rgba(154, 204, 201, 0.15) 100%);
-    --gradient-accent: linear-gradient(135deg, hsl(176 33% 70%) 0%, hsl(176 45% 60%) 100%);
-    --gradient-gold: linear-gradient(135deg, hsl(176 33% 70%) 0%, hsl(176 45% 60%) 100%);
-    --gradient-teal: linear-gradient(135deg, hsl(176 40% 72%) 0%, hsl(176 35% 58%) 100%);
-    --gradient-mixed: linear-gradient(135deg, hsl(176 45% 78%) 0%, hsl(176 35% 68%) 50%, hsl(176 33% 70%) 100%);
-    --gradient-soft: linear-gradient(180deg, hsl(176 50% 90%) 0%, hsl(176 45% 85%) 100%);
+    /* Purple Gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(270 50% 85%) 0%, hsl(260 45% 75%) 50%, hsl(255 40% 68%) 100%);
+    --gradient-card: linear-gradient(180deg, rgba(139, 127, 199, 0.05) 0%, rgba(139, 127, 199, 0.15) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(255 40% 62%) 0%, hsl(265 45% 58%) 100%);
+    --gradient-gold: linear-gradient(135deg, hsl(255 40% 62%) 0%, hsl(340 60% 70%) 100%);
+    --gradient-teal: linear-gradient(135deg, hsl(260 45% 70%) 0%, hsl(255 45% 58%) 100%);
+    --gradient-mixed: linear-gradient(135deg, hsl(265 45% 75%) 0%, hsl(260 40% 68%) 50%, hsl(255 40% 62%) 100%);
+    --gradient-soft: linear-gradient(180deg, hsl(270 45% 90%) 0%, hsl(265 40% 85%) 100%);
 
-    /* Shadows with teal tints */
-    --shadow-soft: 0 4px 20px -4px hsl(176 33% 70% / 0.2);
-    --shadow-medium: 0 8px 30px -8px hsl(176 33% 70% / 0.3);
-    --shadow-strong: 0 12px 40px -8px hsl(176 33% 70% / 0.35);
-    --shadow-glow: 0 0 50px hsl(176 33% 70% / 0.4);
+    /* Shadows with purple tints */
+    --shadow-soft: 0 4px 20px -4px hsl(255 40% 62% / 0.2);
+    --shadow-medium: 0 8px 30px -8px hsl(255 40% 62% / 0.3);
+    --shadow-strong: 0 12px 40px -8px hsl(255 40% 62% / 0.35);
+    --shadow-glow: 0 0 50px hsl(255 40% 62% / 0.4);
 
-    --sidebar-background: 176 50% 94%;
-    --sidebar-foreground: 220 20% 15%;
-    --sidebar-primary: 176 33% 70%;
+    --sidebar-background: 265 35% 94%;
+    --sidebar-foreground: 270 15% 15%;
+    --sidebar-primary: 255 40% 62%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 176 45% 85%;
-    --sidebar-accent-foreground: 220 20% 15%;
-    --sidebar-border: 176 40% 80%;
-    --sidebar-ring: 176 33% 70%;
+    --sidebar-accent: 265 40% 88%;
+    --sidebar-accent-foreground: 270 15% 15%;
+    --sidebar-border: 260 30% 82%;
+    --sidebar-ring: 255 40% 62%;
   }
 
   .dark {
-    --background: 176 10% 10%;
-    --foreground: 176 20% 95%;
+    --background: 265 20% 10%;
+    --foreground: 265 20% 95%;
 
-    --card: 176 8% 12%;
-    --card-foreground: 176 20% 95%;
+    --card: 265 15% 12%;
+    --card-foreground: 265 20% 95%;
 
-    --popover: 176 8% 12%;
-    --popover-foreground: 176 20% 95%;
+    --popover: 265 15% 12%;
+    --popover-foreground: 265 20% 95%;
 
-    --primary: 176 33% 65%;
+    --primary: 255 40% 65%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 350 65% 60%;
+    --secondary: 340 60% 65%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 176 10% 18%;
-    --muted-foreground: 176 10% 60%;
+    --muted: 265 15% 18%;
+    --muted-foreground: 265 10% 60%;
 
-    --accent: 176 40% 50%;
+    --accent: 260 45% 55%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 62.8% 30.6%;
