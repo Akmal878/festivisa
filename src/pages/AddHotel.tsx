@@ -194,10 +194,7 @@ export default function AddHotel() {
     }
 
     setIsFetching(false);
-  }
-      navigate('/');
-    }
-  }, [user, role, loading, navigate, toast]);
+  };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
