@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/lib/auth";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
+import VerifyEmail from "./pages/VerifyEmail";
 import AddEvent from "./pages/AddEvent";
 import MyEvents from "./pages/MyEvents";
 import MyInvites from "./pages/MyInvites";
@@ -30,6 +31,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/verify-email" element={<VerifyEmail />} />
             <Route path="/add-event" element={<AddEvent />} />
             <Route path="/my-events" element={<MyEvents />} />
             <Route path="/my-invites" element={<MyInvites />} />

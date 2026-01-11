@@ -145,11 +145,8 @@ export default function Auth() {
       });
       setIsLoading(false);
     } else {
-      toast({
-        title: 'Account Created!',
-        description: 'Welcome to Festivisa! Your account has been created.',
-      });
-      // Will redirect based on role in useEffect
+      // Redirect to email verification page
+      navigate('/verify-email');
     }
   };
 
