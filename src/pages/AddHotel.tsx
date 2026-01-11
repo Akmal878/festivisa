@@ -468,9 +468,10 @@ export default function AddHotel() {
 
     if (hotelError) {
       console.error('Hotel creation error:', hotelError);
+      console.error('Error details:', JSON.stringify(hotelError, null, 2));
       toast({
         title: 'Error',
-        description: hotelError.message || 'Failed to create hotel.',
+        description: hotelError.message || hotelError.details || 'Failed to save venue. Please check your inputs.',
         variant: 'destructive',
       });
       setIsLoading(false);
