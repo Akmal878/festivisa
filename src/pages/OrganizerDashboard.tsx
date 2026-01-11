@@ -45,43 +45,49 @@ export default function OrganizerDashboard() {
   }, [user, role]);
 
   const fetchStats = async () => {
+    if (!user?.id) return;
+    
     setIsLoading(true);
 
-    // Fetch venues (not just count)
-    const { data: venuesData, count: venueCount } = await supabase
-      .from('hotels')
-      .select('*', { count: 'exact' })
-      .eq('organizer_id', user?.id)
-      .order('created_at', { ascending: false });
+    try {
+      // Fetch venues (not just count)
+      const { data: venuesData, count: venueCount } = await supabase
+        .from('hotels')
+        .select('*', { count: 'exact' })
+        .eq('organizer_id', user.id)
+        .order('created_at', { ascending: false });
 
-    setHotels(venuesData || []);
+      setHotels(venuesData || []);
 
-    // Fetch sent invites
-    const { count: inviteCount } = await supabase
-      .from('invites')
-      .select('*', { count: 'exact', head: true })
-      .eq('organizer_id', user?.id);
+      // Fetch sent invites
+      const { count: inviteCount } = await supabase
+        .from('invites')
+        .select('*', { count: 'exact', head: true })
+        .eq('organizer_id', user.id);
 
-    // Fetch favorites
-    const { count: favoriteCount } = await supabase
-      .from('favorites')
-      .select('*', { count: 'exact', head: true })
-      .eq('organizer_id', user?.id);
+      // Fetch favorites
+      const { count: favoriteCount } = await supabase
+        .from('favorites')
+        .select('*', { count: 'exact', head: true })
+        .eq('organizer_id', user.id);
 
-    // Fetch total open events
-    const { count: eventCount } = await supabase
-      .from('events')
-      .select('*', { count: 'exact', head: true })
-      .eq('status', 'open');
+      // Fetch total open events
+      const { count: eventCount } = await supabase
+        .from('events')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'open');
 
-    setStats({
-      totalVenues: venueCount || 0,
-      sentInvites: inviteCount || 0,
-      favorites: favoriteCount || 0,
-      totalEvents: eventCount || 0,
-    });
-
-    setIsLoading(false);
+      setStats({
+        totalVenues: venueCount || 0,
+        sentInvites: inviteCount || 0,
+        favorites: favoriteCount || 0,
+        totalEvents: eventCount || 0,
+      });
+    } catch (error) {
+      console.error('Error fetching stats:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   if (loading || isLoading) {
