@@ -142,7 +142,10 @@ export default function AddHotel() {
       toast({
         title: 'Access Denied',
         description: 'Only organizers can add hotels.',
-      else if (editId && user && role === 'organizer') {
+        variant: 'destructive',
+      });
+      navigate('/');
+    } else if (editId && user && role === 'organizer') {
       fetchVenueData(editId);
     }
   }, [user, role, loading, navigate, toast, editId]);
