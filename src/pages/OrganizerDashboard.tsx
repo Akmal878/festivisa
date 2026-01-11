@@ -275,12 +275,6 @@ export default function OrganizerDashboard() {
               </Link>
             </div>
           </div>
-              </div>
-              <Button size="lg" className="btn-gold">
-                View Guide
-              </Button>
-            </div>
-          </Card>
         </div>
       </div>
     </Layout>
