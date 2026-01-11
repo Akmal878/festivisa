@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -86,7 +86,10 @@ interface MenuBundle {
 }
 
 export default function AddHotel() {
+  const [searchParams] = useSearchParams();
+  const editId = searchParams.get('edit');
   const [isLoading, setIsLoading] = useState(false);
+  const [isFetching, setIsFetching] = useState(!!editId);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [videoFiles, setVideoFiles] = useState<File[]>([]);
@@ -139,8 +142,56 @@ export default function AddHotel() {
       toast({
         title: 'Access Denied',
         description: 'Only organizers can add hotels.',
+      else if (editId && user && role === 'organizer') {
+      fetchVenueData(editId);
+    }
+  }, [user, role, loading, navigate, toast, editId]);
+
+  const fetchVenueData = async (id: string) => {
+    setIsFetching(true);
+    const { data, error } = await supabase
+      .from('hotels')
+      .select('*')
+      .eq('id', id)
+      .eq('organizer_id', user?.id)
+      .single();
+
+    if (error || !data) {
+      toast({
+        title: 'Error',
+        description: 'Failed to load venue data.',
         variant: 'destructive',
       });
+      navigate('/organizer-dashboard');
+      return;
+    }
+
+    // Set form data
+    form.reset({
+      name: data.name,
+      description: data.description || '',
+      address: data.address,
+      city: data.city,
+    });
+
+    setSelectedCity(pakistanCities.find(c => c.label === data.city)?.value || '');
+    setMapLocation(data.map_location || '');
+    setParkingCapacity(data.parking_capacity?.toString() || '');
+
+    // Set existing images
+    if (data.image_urls && data.image_urls.length > 0) {
+      setImagePreviews(data.image_urls);
+    } else if (data.image_url) {
+      setImagePreviews([data.image_url]);
+    }
+
+    // Set existing videos
+    if (data.video_urls && data.video_urls.length > 0) {
+      setVideoPreviews(data.video_urls);
+    }
+
+    setIsFetching(false);
+  }
       navigate('/');
     }
   }, [user, role, loading, navigate, toast]);
@@ -318,23 +369,7 @@ export default function AddHotel() {
   };
 
   const onSubmit = async (data: HotelForm) => {
-    if (!user) {
-      toast({
-        title: 'Error',
-        description: 'You must be logged in to add a venue.',
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    if (role !== 'organizer') {
-      toast({
-        title: 'Access Denied',
-        description: 'Only organizers can add venues.',
-        variant: 'destructive',
-      });
-      return;
-    }
+    if (!user) return;
 
     setIsLoading(true);
     const imageUrls: string[] = [];
@@ -390,32 +425,52 @@ export default function AddHotel() {
       videoUrls.push(publicUrl);
     }
 
-    // Create hotel with all media
-    const { data: hotelData, error: hotelError } = await supabase
-      .from('hotels')
-      .insert({
-        organizer_id: user.id,
-        name: data.name,
-        description: data.description || null,
-        address: data.address,
-        city: data.city,
-        image_url: imageUrls[0] || null,
-        image_urls: imageUrls.length > 0 ? imageUrls : null,
-        video_urls: videoUrls.length > 0 ? videoUrls : null,
-        map_location: mapLocation || null,
-        parking_capacity: parkingCapacity ? parseInt(parkingCapacity) : null,
-      })
-      .select()
-      .single();
+    // Create or update hotel with all media
+    const hotelPayload = {
+      organizer_id: user.id,
+      name: data.name,
+      description: data.description || null,
+      address: data.address,
+      city: data.city,
+      image_url: imageUrls[0] || imagePreviews[0] || null,
+      image_urls: [...imagePreviews, ...imageUrls].length > 0 ? [...imagePreviews, ...imageUrls] : null,
+      video_urls: [...videoPreviews, ...videoUrls].length > 0 ? [...videoPreviews, ...videoUrls] : null,
+      map_location: mapLocation || null,
+      parking_capacity: parkingCapacity ? parseInt(parkingCapacity) : null,
+    };
+
+    let hotelData;
+    let hotelError;
+
+    if (editId) {
+      // Update existing venue
+      const result = await supabase
+        .from('hotels')
+        .update(hotelPayload)
+        .eq('id', editId)
+        .eq('organizer_id', user.id)
+        .select()
+        .single();
+      
+      hotelData = result.data;
+      hotelError = result.error;
+    } else {
+      // Create new venue
+      const result = await supabase
+        .from('hotels')
+        .insert(hotelPayload)
+        .select()
+        .single();
+      
+      hotelData = result.data;
+      hotelError = result.error;
+    }
 
     if (hotelError) {
       console.error('Hotel creation error:', hotelError);
-      console.error('Error details:', JSON.stringify(hotelError, null, 2));
-      console.error('User ID:', user.id);
-      console.error('User role:', role);
       toast({
         title: 'Error',
-        description: hotelError.message || 'Failed to create hotel. Check console for details.',
+        description: hotelError.message || 'Failed to create hotel.',
         variant: 'destructive',
       });
       setIsLoading(false);
@@ -469,14 +524,14 @@ export default function AddHotel() {
     }
 
     toast({
-      title: 'Hotel Listed!',
-      description: 'Your venue has been added successfully.',
+      title: editId ? 'Venue Updated!' : 'Hotel Listed!',
+      description: editId ? 'Your venue has been updated successfully.' : 'Your venue has been added successfully.',
     });
-    navigate('/all-events');
+    navigate('/organizer-dashboard');
     setIsLoading(false);
   };
 
-  if (loading) {
+  if (loading || isFetching) {
     return (
       <Layout>
         <div className="min-h-[60vh] flex items-center justify-center">
@@ -495,10 +550,10 @@ export default function AddHotel() {
               <Building2 className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
             </div>
             <h1 className="font-display text-3xl sm:text-4xl font-semibold text-foreground mb-2">
-              Add Your Hotel
+              {editId ? 'Edit Your Venue' : 'Add Your Hotel'}
             </h1>
             <p className="text-muted-foreground">
-              List your venue and connect with event planners.
+              {editId ? 'Update your venue information' : 'List your venue and connect with event planners.'}
             </p>
           </div>
 

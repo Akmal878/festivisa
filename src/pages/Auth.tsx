@@ -93,10 +93,14 @@ export default function Auth() {
   });
 
   useEffect(() => {
-    if (user) {
-      navigate('/');
+    if (user && role) {
+      if (role === 'organizer') {
+        navigate('/organizer-dashboard');
+      } else {
+        navigate('/');
+      }
     }
-  }, [user, navigate]);
+  }, [user, role, navigate]);
 
   const handleLogin = async (data: LoginForm) => {
     setIsLoading(true);
@@ -110,14 +114,14 @@ export default function Auth() {
           : error.message,
         variant: 'destructive',
       });
+      setIsLoading(false);
     } else {
       toast({
         title: 'Welcome back!',
         description: 'You have successfully logged in.',
       });
-      navigate('/');
+      // Will redirect based on role in useEffect
     }
-    setIsLoading(false);
   };
 
   const handleSignup = async (data: SignupForm) => {
@@ -139,14 +143,14 @@ export default function Auth() {
         description: errorMessage,
         variant: 'destructive',
       });
+      setIsLoading(false);
     } else {
       toast({
         title: 'Account Created!',
         description: 'Welcome to Festivisa! Your account has been created.',
       });
-      navigate('/');
+      // Will redirect based on role in useEffect
     }
-    setIsLoading(false);
   };
 
   return (

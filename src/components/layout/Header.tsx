@@ -69,10 +69,12 @@ export function Header() {
           <div className="hidden md:flex items-center gap-4">
             {user ? (
               <div className="flex items-center gap-4">
-                <Link to="/profile" className="flex items-center gap-2 text-sm text-white/70 hover:text-primary transition-colors">
-                  {role === 'organizer' ? <Building2 className="w-4 h-4" /> : <User className="w-4 h-4" />}
-                  <span className="capitalize">{role}</span>
-                </Link>
+                {role === 'user' && (
+                  <Link to="/profile" className="flex items-center gap-2 text-sm text-white/70 hover:text-primary transition-colors">
+                    <User className="w-4 h-4" />
+                    <span>Profile</span>
+                  </Link>
+                )}
                 <Button 
                   variant="ghost" 
                   size="sm" 
@@ -145,9 +147,11 @@ export function Header() {
                   <Link to="/chats" className="text-sm font-medium text-white/70 hover:text-primary" onClick={() => setIsOpen(false)}>
                     Messages
                   </Link>
-                  <Link to="/profile" className="text-sm font-medium text-white/70 hover:text-primary" onClick={() => setIsOpen(false)}>
-                    My Profile
-                  </Link>
+                  {role === 'user' && (
+                    <Link to="/profile" className="text-sm font-medium text-white/70 hover:text-primary" onClick={() => setIsOpen(false)}>
+                      My Profile
+                    </Link>
+                  )}
                 </>
               )}
               {user ? (

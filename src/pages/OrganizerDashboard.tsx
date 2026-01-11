@@ -5,7 +5,18 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useAuth } from '@/lib/auth';
 import { supabase } from '@/integrations/supabase/client';
-import { Building2, Calendar, Heart, Send, MessageCircle, Plus, TrendingUp, Users } from 'lucide-react';
+import { Building2, Calendar, Heart, Send, MessageCircle, Plus, TrendingUp, Users, Edit, MapPin, Image as ImageIcon } from 'lucide-react';
+
+interface Hotel {
+  id: string;
+  name: string;
+  description: string | null;
+  address: string;
+  city: string;
+  image_url: string | null;
+  image_urls: string[] | null;
+  created_at: string;
+}
 
 export default function OrganizerDashboard() {
   const { user, role, loading } = useAuth();
@@ -16,6 +27,7 @@ export default function OrganizerDashboard() {
     favorites: 0,
     totalEvents: 0,
   });
+  const [hotels, setHotels] = useState<Hotel[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -35,11 +47,14 @@ export default function OrganizerDashboard() {
   const fetchStats = async () => {
     setIsLoading(true);
 
-    // Fetch total venues
-    const { count: venueCount } = await supabase
+    // Fetch venues (not just count)
+    const { data: venuesData, count: venueCount } = await supabase
       .from('hotels')
-      .select('*', { count: 'exact', head: true })
-      .eq('organizer_id', user?.id);
+      .select('*', { count: 'exact' })
+      .eq('organizer_id', user?.id)
+      .order('created_at', { ascending: false });
+
+    setHotels(venuesData || []);
 
     // Fetch sent invites
     const { count: inviteCount } = await supabase
@@ -146,22 +161,77 @@ export default function OrganizerDashboard() {
 
           {/* Quick Actions */}
           <div className="mb-8">
-            <h2 className="font-display text-2xl font-semibold mb-4">Quick Actions</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="font-display text-2xl font-semibold">Your Venues</h2>
               <Link to="/add-hotel">
-                <Card className="card-wedding p-6 hover:shadow-lg transition-shadow cursor-pointer group">
-                  <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                      <Plus className="w-7 h-7 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-lg">Add New Venue</h3>
-                      <p className="text-sm text-muted-foreground">List your venue</p>
-                    </div>
-                  </div>
-                </Card>
+                <Button className="btn-gold gap-2">
+                  <Plus className="w-5 h-5" />
+                  Add New Venue
+                </Button>
               </Link>
+            </div>
 
+            {hotels.length === 0 ? (
+              <Card className="card-wedding p-12 text-center">
+                <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                  <Building2 className="w-10 h-10 text-primary" />
+                </div>
+                <h3 className="font-display text-xl font-semibold mb-2">No Venues Yet</h3>
+                <p className="text-muted-foreground mb-6">
+                  Start by adding your first venue to attract event planners
+                </p>
+                <Link to="/add-hotel">
+                  <Button className="btn-gold gap-2">
+                    <Plus className="w-5 h-5" />
+                    Add Your First Venue
+                  </Button>
+                </Link>
+              </Card>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {hotels.map((hotel) => (
+                  <Card key={hotel.id} className="card-wedding overflow-hidden group hover:shadow-lg transition-shadow">
+                    <div className="relative h-48 bg-muted overflow-hidden">
+                      {hotel.image_url || (hotel.image_urls && hotel.image_urls[0]) ? (
+                        <img
+                          src={hotel.image_url || hotel.image_urls![0]}
+                          alt={hotel.name}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-secondary/10">
+                          <ImageIcon className="w-16 h-16 text-muted-foreground" />
+                        </div>
+                      )}
+                    </div>
+                    <div className="p-6">
+                      <h3 className="font-display text-xl font-semibold mb-2 line-clamp-1">{hotel.name}</h3>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
+                        <MapPin className="w-4 h-4" />
+                        <span className="line-clamp-1">{hotel.city}</span>
+                      </div>
+                      {hotel.description && (
+                        <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+                          {hotel.description}
+                        </p>
+                      )}
+                      <Link to={`/add-hotel?edit=${hotel.id}`}>
+                        <Button variant="outline" className="w-full gap-2">
+                          <Edit className="w-4 h-4" />
+                          Edit Venue
+                        </Button>
+                      </Link>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Stats Cards */}
+          <div className="mb-8">
+            <h2 className="font-display text-2xl font-semibold mb-4">Quick Access</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <Link to="/all-events">
                 <Card className="card-wedding p-6 hover:shadow-lg transition-shadow cursor-pointer group">
                   <div className="flex items-center gap-4">
@@ -170,7 +240,21 @@ export default function OrganizerDashboard() {
                     </div>
                     <div>
                       <h3 className="font-semibold text-lg">Browse Events</h3>
-                      <p className="text-sm text-muted-foreground">Find opportunities</p>
+                      <p className="text-sm text-muted-foreground">{stats.totalEvents} open events</p>
+                    </div>
+                  </div>
+                </Card>
+              </Link>
+
+              <Link to="/sent-invites">
+                <Card className="card-wedding p-6 hover:shadow-lg transition-shadow cursor-pointer group">
+                  <div className="flex items-center gap-4">
+                    <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                      <Send className="w-7 h-7 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-lg">Sent Invites</h3>
+                      <p className="text-sm text-muted-foreground">{stats.sentInvites} sent</p>
                     </div>
                   </div>
                 </Card>
@@ -191,53 +275,6 @@ export default function OrganizerDashboard() {
               </Link>
             </div>
           </div>
-
-          {/* Navigation Cards */}
-          <div className="mb-8">
-            <h2 className="font-display text-2xl font-semibold mb-4">Manage Your Business</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <Link to="/sent-invites">
-                <Card className="card-wedding p-8 hover:shadow-lg transition-all cursor-pointer border-2 border-transparent hover:border-primary/20">
-                  <div className="flex items-start gap-4">
-                    <div className="w-16 h-16 rounded-2xl gradient-gold flex items-center justify-center flex-shrink-0">
-                      <Send className="w-8 h-8 text-white" />
-                    </div>
-                    <div>
-                      <h3 className="font-display text-xl font-semibold mb-2">Sent Invites</h3>
-                      <p className="text-muted-foreground">
-                        Track your sent invitations and manage responses from event planners.
-                      </p>
-                    </div>
-                  </div>
-                </Card>
-              </Link>
-
-              <Link to="/favorites">
-                <Card className="card-wedding p-8 hover:shadow-lg transition-all cursor-pointer border-2 border-transparent hover:border-primary/20">
-                  <div className="flex items-start gap-4">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-destructive/80 to-destructive flex items-center justify-center flex-shrink-0">
-                      <Heart className="w-8 h-8 text-white" />
-                    </div>
-                    <div>
-                      <h3 className="font-display text-xl font-semibold mb-2">Favorite Events</h3>
-                      <p className="text-muted-foreground">
-                        View and manage events you've saved for future opportunities.
-                      </p>
-                    </div>
-                  </div>
-                </Card>
-              </Link>
-            </div>
-          </div>
-
-          {/* Help Section */}
-          <Card className="card-wedding p-8 bg-gradient-to-br from-primary/5 to-transparent border-2 border-primary/20">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-              <div>
-                <h3 className="font-display text-2xl font-semibold mb-2">Need Help Getting Started?</h3>
-                <p className="text-muted-foreground">
-                  Learn how to maximize your presence and connect with more event planners.
-                </p>
               </div>
               <Button size="lg" className="btn-gold">
                 View Guide
