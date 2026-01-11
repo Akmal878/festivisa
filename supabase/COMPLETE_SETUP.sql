@@ -6,8 +6,12 @@
 
 -- ==================== STEP 1: CREATE BASE TABLES ====================
 
--- Create role enum
-CREATE TYPE IF NOT EXISTS public.app_role AS ENUM ('user', 'organizer');
+-- Create role enum (only if it doesn't exist)
+DO $$ BEGIN
+  CREATE TYPE public.app_role AS ENUM ('user', 'organizer');
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
 
 -- Create profiles table
 CREATE TABLE IF NOT EXISTS public.profiles (
@@ -339,9 +343,20 @@ CREATE POLICY "Organizers can delete own menu bundles" ON public.menu_bundles FO
 
 -- ==================== STEP 7: ENABLE REALTIME ====================
 
--- Enable realtime for messages and invites
-ALTER PUBLICATION supabase_realtime ADD TABLE public.messages;
-ALTER PUBLICATION supabase_realtime ADD TABLE public.invites;
+-- Enable realtime for messages and invites (only if not already added)
+DO $$ 
+BEGIN
+  ALTER PUBLICATION supabase_realtime ADD TABLE public.messages;
+EXCEPTION
+  WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$ 
+BEGIN
+  ALTER PUBLICATION supabase_realtime ADD TABLE public.invites;
+EXCEPTION
+  WHEN duplicate_object THEN NULL;
+END $$;
 
 -- ==================== STEP 8: CREATE STORAGE BUCKET ====================
 

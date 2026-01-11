@@ -41,6 +41,9 @@ export function Header() {
             )}
             {user && role === 'organizer' && (
               <>
+                <Link to="/organizer-dashboard" className="text-sm font-medium text-white/70 hover:text-primary transition-colors">
+                  Dashboard
+                </Link>
                 <Link to="/add-hotel" className="text-sm font-medium text-white/70 hover:text-primary transition-colors">
                   Add Venue
                 </Link>
@@ -120,6 +123,9 @@ export function Header() {
               )}
               {user && role === 'organizer' && (
                 <>
+                  <Link to="/organizer-dashboard" className="text-sm font-medium text-white/70 hover:text-primary" onClick={() => setIsOpen(false)}>
+                    Dashboard
+                  </Link>
                   <Link to="/add-hotel" className="text-sm font-medium text-white/70 hover:text-primary" onClick={() => setIsOpen(false)}>
                     Add Venue
                   </Link>

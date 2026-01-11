@@ -318,7 +318,23 @@ export default function AddHotel() {
   };
 
   const onSubmit = async (data: HotelForm) => {
-    if (!user) return;
+    if (!user) {
+      toast({
+        title: 'Error',
+        description: 'You must be logged in to add a venue.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (role !== 'organizer') {
+      toast({
+        title: 'Access Denied',
+        description: 'Only organizers can add venues.',
+        variant: 'destructive',
+      });
+      return;
+    }
 
     setIsLoading(true);
     const imageUrls: string[] = [];
@@ -394,9 +410,12 @@ export default function AddHotel() {
 
     if (hotelError) {
       console.error('Hotel creation error:', hotelError);
+      console.error('Error details:', JSON.stringify(hotelError, null, 2));
+      console.error('User ID:', user.id);
+      console.error('User role:', role);
       toast({
         title: 'Error',
-        description: hotelError.message || 'Failed to create hotel.',
+        description: hotelError.message || 'Failed to create hotel. Check console for details.',
         variant: 'destructive',
       });
       setIsLoading(false);

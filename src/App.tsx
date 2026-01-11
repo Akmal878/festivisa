@@ -15,6 +15,7 @@ import Favorites from "./pages/Favorites";
 import SentInvites from "./pages/SentInvites";
 import Chats from "./pages/Chats";
 import Profile from "./pages/Profile";
+import OrganizerDashboard from "./pages/OrganizerDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,6 +35,7 @@ const App = () => (
             <Route path="/my-invites" element={<MyInvites />} />
             <Route path="/add-hotel" element={<AddHotel />} />
             <Route path="/all-events" element={<AllEvents />} />
+            <Route path="/organizer-dashboard" element={<OrganizerDashboard />} />
             <Route path="/favorites" element={<Favorites />} />
             <Route path="/sent-invites" element={<SentInvites />} />
             <Route path="/chats" element={<Chats />} />
