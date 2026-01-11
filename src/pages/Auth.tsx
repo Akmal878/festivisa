@@ -71,7 +71,7 @@ export default function Auth() {
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('login');
   const [selectedCity, setSelectedCity] = useState<string>('');
-  const { user, signIn, signUp } = useAuth();
+  const { user, role, loading, signIn, signUp } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -152,6 +152,16 @@ export default function Auth() {
       // Will redirect based on role in useEffect
     }
   };
+
+  if (loading) {
+    return (
+      <Layout showFooter={false}>
+        <div className="min-h-[calc(100vh-5rem)] flex items-center justify-center">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout showFooter={false}>
