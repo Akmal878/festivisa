@@ -74,12 +74,32 @@ export default function AllEvents() {
   }, [searchQuery, events]);
 
   const fetchData = async () => {
-    // Fetch open events
-    const { data: eventsData, error: eventsError } = await supabase
-      .from('events')
-      .select('*')
-      .eq('status', 'open')
-      .order('created_at', { ascending: false });
+    // Run all queries in parallel and limit events to 50
+    const [
+      { data: eventsData, error: eventsError },
+      { data: favData },
+      { data: invitesData },
+      { data: hotelsData }
+    ] = await Promise.all([
+      supabase
+        .from('events')
+        .select('*')
+        .eq('status', 'open')
+        .order('created_at', { ascending: false })
+        .limit(50), // Limit to 50 events for better performance
+      supabase
+        .from('favorites')
+        .select('event_id')
+        .eq('organizer_id', user?.id),
+      supabase
+        .from('invites')
+        .select('event_id')
+        .eq('organizer_id', user?.id),
+      supabase
+        .from('hotels')
+        .select('id, name')
+        .eq('organizer_id', user?.id)
+    ]);
 
     if (eventsError) {
       console.error('Error fetching events:', eventsError);
@@ -88,31 +108,13 @@ export default function AllEvents() {
       setFilteredEvents(eventsData || []);
     }
 
-    // Fetch organizer's favorites
-    const { data: favData } = await supabase
-      .from('favorites')
-      .select('event_id')
-      .eq('organizer_id', user?.id);
-
     if (favData) {
       setFavorites(new Set(favData.map((f) => f.event_id)));
     }
 
-    // Fetch organizer's sent invites
-    const { data: invitesData } = await supabase
-      .from('invites')
-      .select('event_id')
-      .eq('organizer_id', user?.id);
-
     if (invitesData) {
       setSentInvites(new Set(invitesData.map((i) => i.event_id)));
     }
-
-    // Fetch organizer's hotels
-    const { data: hotelsData } = await supabase
-      .from('hotels')
-      .select('id, name')
-      .eq('organizer_id', user?.id);
 
     if (hotelsData) {
       setHotels(hotelsData);

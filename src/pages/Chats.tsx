@@ -68,13 +68,24 @@ export default function Chats() {
       .or(`user_id.eq.${user?.id},organizer_id.eq.${user?.id}`);
 
     if (!error && data) {
-      const chatsWithUsers = await Promise.all(
-        data.map(async (chat) => {
-          const otherId = chat.user_id === user?.id ? chat.organizer_id : chat.user_id;
-          const { data: profile } = await supabase.from('profiles').select('full_name, email').eq('id', otherId).single();
-          return { ...chat, other_user: profile };
-        })
+      // Get all unique user IDs
+      const userIds = data.map(chat => 
+        chat.user_id === user?.id ? chat.organizer_id : chat.user_id
       );
+      
+      // Fetch all profiles in one query instead of N queries
+      const { data: profiles } = await supabase
+        .from('profiles')
+        .select('id, full_name, email')
+        .in('id', userIds);
+      
+      // Map profiles to chats
+      const profileMap = new Map(profiles?.map(p => [p.id, p]) || []);
+      const chatsWithUsers = data.map(chat => {
+        const otherId = chat.user_id === user?.id ? chat.organizer_id : chat.user_id;
+        return { ...chat, other_user: profileMap.get(otherId) || null };
+      });
+      
       setChats(chatsWithUsers);
     }
     setIsLoading(false);

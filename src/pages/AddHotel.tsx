@@ -193,6 +193,46 @@ export default function AddHotel() {
       setVideoPreviews(data.video_urls);
     }
 
+    // Fetch existing halls
+    const { data: hallsData } = await supabase
+      .from('hotel_halls')
+      .select('*')
+      .eq('hotel_id', id);
+    
+    if (hallsData && hallsData.length > 0) {
+      setHalls(hallsData.map(hall => ({
+        name: hall.name,
+        capacity: hall.capacity,
+        description: hall.description || '',
+        price_per_event: hall.price_per_event || 0,
+      })));
+    }
+
+    // Fetch existing menu bundles
+    const { data: menuData } = await supabase
+      .from('menu_bundles')
+      .select('*')
+      .eq('hotel_id', id);
+    
+    if (menuData && menuData.length > 0) {
+      setMenuBundles(menuData.map(bundle => ({
+        name: bundle.name,
+        chicken_dish: bundle.chicken_dish,
+        rice_dish: bundle.rice_dish,
+        additional_main_dishes: bundle.additional_main_dishes || [],
+        include_drinks: bundle.include_drinks,
+        include_raita: bundle.include_raita,
+        include_salad: bundle.include_salad,
+        include_cream_salad: bundle.include_cream_salad,
+        include_sweet_dish: bundle.include_sweet_dish,
+        sweet_dish_type: bundle.sweet_dish_type || '',
+        include_tea: bundle.include_tea,
+        include_table_service: bundle.include_table_service,
+        custom_optional_items: bundle.custom_optional_items || [],
+        final_price: bundle.final_price,
+      })));
+    }
+
     setIsFetching(false);
   };
 
@@ -478,7 +518,13 @@ export default function AddHotel() {
       return;
     }
 
-    // Create halls
+    // If editing, delete existing halls and menu bundles first
+    if (editId) {
+      await supabase.from('hotel_halls').delete().eq('hotel_id', editId);
+      await supabase.from('menu_bundles').delete().eq('hotel_id', editId);
+    }
+
+    // Create/Update halls
     const validHalls = halls.filter(h => h.name.trim() !== '');
     if (validHalls.length > 0) {
       const { error: hallsError } = await supabase.from('hotel_halls').insert(
@@ -493,10 +539,15 @@ export default function AddHotel() {
 
       if (hallsError) {
         console.error('Error creating halls:', hallsError);
+        toast({
+          title: 'Warning',
+          description: 'Venue saved but there was an error saving hall details.',
+          variant: 'destructive',
+        });
       }
     }
 
-    // Create menu bundles
+    // Create/Update menu bundles
     const validMenuBundles = menuBundles.filter(b => b.name.trim() !== '' && b.chicken_dish.trim() !== '');
     if (validMenuBundles.length > 0) {
       const { error: bundlesError } = await supabase.from('menu_bundles').insert(
@@ -521,6 +572,11 @@ export default function AddHotel() {
 
       if (bundlesError) {
         console.error('Error creating menu bundles:', bundlesError);
+        toast({
+          title: 'Warning',
+          description: 'Venue saved but there was an error saving menu details.',
+          variant: 'destructive',
+        });
       }
     }
 

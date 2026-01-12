@@ -50,33 +50,33 @@ export default function OrganizerDashboard() {
     setIsLoading(true);
 
     try {
-      // Fetch venues (not just count)
-      const { data: venuesData, count: venueCount } = await supabase
-        .from('hotels')
-        .select('*', { count: 'exact' })
-        .eq('organizer_id', user.id)
-        .order('created_at', { ascending: false });
+      // Run all queries in parallel for much faster loading
+      const [
+        { data: venuesData, count: venueCount },
+        { count: inviteCount },
+        { count: favoriteCount },
+        { count: eventCount }
+      ] = await Promise.all([
+        supabase
+          .from('hotels')
+          .select('*', { count: 'exact' })
+          .eq('organizer_id', user.id)
+          .order('created_at', { ascending: false }),
+        supabase
+          .from('invites')
+          .select('*', { count: 'exact', head: true })
+          .eq('organizer_id', user.id),
+        supabase
+          .from('favorites')
+          .select('*', { count: 'exact', head: true })
+          .eq('organizer_id', user.id),
+        supabase
+          .from('events')
+          .select('*', { count: 'exact', head: true })
+          .eq('status', 'open')
+      ]);
 
       setHotels(venuesData || []);
-
-      // Fetch sent invites
-      const { count: inviteCount } = await supabase
-        .from('invites')
-        .select('*', { count: 'exact', head: true })
-        .eq('organizer_id', user.id);
-
-      // Fetch favorites
-      const { count: favoriteCount } = await supabase
-        .from('favorites')
-        .select('*', { count: 'exact', head: true })
-        .eq('organizer_id', user.id);
-
-      // Fetch total open events
-      const { count: eventCount } = await supabase
-        .from('events')
-        .select('*', { count: 'exact', head: true })
-        .eq('status', 'open');
-
       setStats({
         totalVenues: venueCount || 0,
         sentInvites: inviteCount || 0,
