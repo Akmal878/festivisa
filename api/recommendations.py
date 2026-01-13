@@ -1,7 +1,9 @@
-from flask import Request, jsonify
+from http.server import BaseHTTPRequestHandler
+import json
 import requests
 import os
 import re
+from urllib.parse import parse_qs
 
 # Supabase configuration
 SUPABASE_URL = os.getenv("VITE_SUPABASE_URL")
@@ -218,46 +220,75 @@ class VenueRecommendationEngine:
         recommendations.sort(key=lambda x: x['matchScore'], reverse=True)
         return recommendations
 
-def handler(request: Request):
+class handler(BaseHTTPRequestHandler):
     """Vercel serverless function handler"""
-    if request.method == 'OPTIONS':
-        return jsonify({}), 200
     
-    try:
-        auth_header = request.headers.get('Authorization')
-        if not auth_header or not auth_header.startswith('Bearer '):
-            return jsonify({'error': 'Unauthorized'}), 401
-        
-        token = auth_header.split(' ')[1]
-        
-        headers = {
-            'apikey': SUPABASE_KEY,
-            'Authorization': f'Bearer {token}'
-        }
-        
-        user_response = requests.get(f"{SUPABASE_URL}/auth/v1/user", headers=headers)
-        
-        if user_response.status_code != 200:
-            return jsonify({'error': 'Invalid token'}), 401
-        
-        user_data = user_response.json()
-        user_id = user_data.get('id')
-        
-        events = supabase_query('events', '*', {'user_id': f'eq.{user_id}'})
-        
-        if not events:
-            return jsonify({'recommendations': [], 'message': 'No events found'})
-        
-        hotels = supabase_query('hotels', '*')
-        halls = supabase_query('hotel_halls', '*')
-        
-        engine = VenueRecommendationEngine()
-        recommendations = engine.recommend_venues(events, hotels, halls)
-        
-        return jsonify({
-            'recommendations': recommendations,
-            'count': len(recommendations)
-        })
+    def do_OPTIONS(self):
+        self.send_response(200)
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'GET, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', 'Authorization, Content-Type')
+        self.end_headers()
     
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+    def do_GET(self):
+        try:
+            auth_header = self.headers.get('Authorization')
+            if not auth_header or not auth_header.startswith('Bearer '):
+                self.send_response(401)
+                self.send_header('Content-Type', 'application/json')
+                self.send_header('Access-Control-Allow-Origin', '*')
+                self.end_headers()
+                self.wfile.write(json.dumps({'error': 'Unauthorized'}).encode())
+                return
+            
+            token = auth_header.split(' ')[1]
+            
+            headers = {
+                'apikey': SUPABASE_KEY,
+                'Authorization': f'Bearer {token}'
+            }
+            
+            user_response = requests.get(f"{SUPABASE_URL}/auth/v1/user", headers=headers)
+            
+            if user_response.status_code != 200:
+                self.send_response(401)
+                self.send_header('Content-Type', 'application/json')
+                self.send_header('Access-Control-Allow-Origin', '*')
+                self.end_headers()
+                self.wfile.write(json.dumps({'error': 'Invalid token'}).encode())
+                return
+            
+            user_data = user_response.json()
+            user_id = user_data.get('id')
+            
+            events = supabase_query('events', '*', {'user_id': f'eq.{user_id}'})
+            
+            if not events:
+                self.send_response(200)
+                self.send_header('Content-Type', 'application/json')
+                self.send_header('Access-Control-Allow-Origin', '*')
+                self.end_headers()
+                self.wfile.write(json.dumps({'recommendations': [], 'message': 'No events found'}).encode())
+                return
+            
+            hotels = supabase_query('hotels', '*')
+            halls = supabase_query('hotel_halls', '*')
+            
+            engine = VenueRecommendationEngine()
+            recommendations = engine.recommend_venues(events, hotels, halls)
+            
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.end_headers()
+            self.wfile.write(json.dumps({
+                'recommendations': recommendations,
+                'count': len(recommendations)
+            }).encode())
+        
+        except Exception as e:
+            self.send_response(500)
+            self.send_header('Content-Type', 'application/json')
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.end_headers()
+            self.wfile.write(json.dumps({'error': str(e)}).encode())
