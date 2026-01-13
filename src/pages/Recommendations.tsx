@@ -7,7 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { useAuth } from '@/lib/auth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, MapPin, Users, DollarSign, Building2, Star, TrendingUp } from 'lucide-react';
+import { Loader2, MapPin, Users, DollarSign, Building2, Star, TrendingUp, Heart } from 'lucide-react';
 import { format } from 'date-fns';
 
 interface Event {
@@ -48,6 +48,7 @@ interface Recommendation {
 export default function Recommendations() {
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const { user, role, loading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -63,8 +64,79 @@ export default function Recommendations() {
   useEffect(() => {
     if (user && role === 'user') {
       fetchRecommendations();
+      fetchFavorites();
     }
   }, [user, role]);
+
+  const fetchFavorites = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('favorites')
+        .select('event_id')
+        .eq('organizer_id', user?.id);
+
+      if (error) throw error;
+
+      const eventIds = new Set(data?.map(f => f.event_id) || []);
+      setFavorites(eventIds);
+    } catch (error) {
+      console.error('Error fetching favorites:', error);
+    }
+  };
+
+  const toggleFavorite = async (hotelId: string) => {
+    try {
+      // Find event associated with this hotel recommendation
+      const event = recommendations.find(r => r.hotel.id === hotelId)?.event;
+      if (!event) return;
+
+      const isFavorited = favorites.has(event.id);
+
+      if (isFavorited) {
+        const { error } = await supabase
+          .from('favorites')
+          .delete()
+          .eq('organizer_id', user?.id)
+          .eq('event_id', event.id);
+
+        if (error) throw error;
+
+        setFavorites(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(event.id);
+          return newSet;
+        });
+
+        toast({
+          title: 'Removed from favorites',
+          description: 'Event removed from your favorites.',
+        });
+      } else {
+        const { error } = await supabase
+          .from('favorites')
+          .insert({
+            organizer_id: user?.id,
+            event_id: event.id,
+          });
+
+        if (error) throw error;
+
+        setFavorites(prev => new Set(prev).add(event.id));
+
+        toast({
+          title: 'Added to favorites',
+          description: 'Event saved to your favorites.',
+        });
+      }
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to update favorites.',
+        variant: 'destructive',
+      });
+    }
+  };
 
   const fetchRecommendations = async () => {
     setIsLoading(true);
@@ -121,7 +193,7 @@ export default function Recommendations() {
   if (loading || isLoading) {
     return (
       <Layout>
-        <div className="min-h-[60vh] flex items-center justify-center">
+        <div className="min-h-[60vh] flex itevententer justify-center">
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
         </div>
       </Layout>
