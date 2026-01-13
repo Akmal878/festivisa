@@ -5,7 +5,18 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useAuth } from '@/lib/auth';
 import { supabase } from '@/integrations/supabase/client';
-import { Building2, Calendar, Heart, Send, MessageCircle, Plus, TrendingUp, Users, Edit, MapPin, Image as ImageIcon } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Building2, Calendar, Heart, Send, MessageCircle, Plus, TrendingUp, Users, Edit, MapPin, Image as ImageIcon, Trash2 } from 'lucide-react';
 
 interface Hotel {
   id: string;
@@ -21,6 +32,7 @@ interface Hotel {
 export default function OrganizerDashboard() {
   const { user, role, loading } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [stats, setStats] = useState({
     totalVenues: 0,
     sentInvites: 0,
@@ -29,6 +41,8 @@ export default function OrganizerDashboard() {
   });
   const [hotels, setHotels] = useState<Hotel[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [hotelToDelete, setHotelToDelete] = useState<Hotel | null>(null);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -87,6 +101,38 @@ export default function OrganizerDashboard() {
       console.error('Error fetching stats:', error);
     } finally {
       setIsLoading(false);
+  const handleDeleteVenue = async () => {
+    if (!hotelToDelete) return;
+
+    try {
+      const { error } = await supabase
+        .from('hotels')
+        .delete()
+        .eq('id', hotelToDelete.id)
+        .eq('organizer_id', user?.id);
+
+      if (error) throw error;
+
+      toast({
+        title: 'Venue Deleted',
+        description: `${hotelToDelete.name} has been successfully deleted.`,
+      });
+
+      // Refresh the data
+      fetchStats();
+    } catch (error) {
+      console.error('Error deleting venue:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to delete venue. Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setDeleteDialogOpen(false);
+      setHotelToDelete(null);
+    }
+  };
+
     }
   };
 
@@ -189,12 +235,25 @@ export default function OrganizerDashboard() {
                 <Link to="/add-hotel">
                   <Button className="btn-gold gap-2">
                     <Plus className="w-5 h-5" />
-                    Add Your First Venue
-                  </Button>
-                </Link>
-              </Card>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    Adddiv className="flex gap-2">
+                        <Link to={`/add-hotel?edit=${hotel.id}`} className="flex-1">
+                          <Button variant="outline" className="w-full gap-2">
+                            <Edit className="w-4 h-4" />
+                            Edit
+                          </Button>
+                        </Link>
+                        <Button 
+                          variant="outline" 
+                          className="gap-2 text-destructive hover:text-destructive hover:bg-destructive/10"
+                          onClick={() => {
+                            setHotelToDelete(hotel);
+                            setDeleteDialogOpen(true);
+                          }}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                          Delete
+                        </Button>
+                      </div="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {hotels.map((hotel) => (
                   <Card key={hotel.id} className="card-wedding overflow-hidden group hover:shadow-lg transition-shadow">
                     <div className="relative h-48 bg-muted overflow-hidden">
@@ -270,6 +329,27 @@ export default function OrganizerDashboard() {
                 <Card className="card-wedding p-6 hover:shadow-lg transition-shadow cursor-pointer group">
                   <div className="flex items-center gap-4">
                     <div className="w-14 h-14 rounded-xl bg-accent/10 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently delete <strong>{hotelToDelete?.name}</strong> and all its associated data including halls, menus, and reviews. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteVenue}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete Venue
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
                       <MessageCircle className="w-7 h-7 text-accent" />
                     </div>
                     <div>
