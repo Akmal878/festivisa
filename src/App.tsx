@@ -10,6 +10,7 @@ import VerifyEmail from "./pages/VerifyEmail";
 import AddEvent from "./pages/AddEvent";
 import MyEvents from "./pages/MyEvents";
 import MyInvites from "./pages/MyInvites";
+import Recommendations from "./pages/Recommendations";
 import AddHotel from "./pages/AddHotel";
 import AllEvents from "./pages/AllEvents";
 import Favorites from "./pages/Favorites";
@@ -35,6 +36,7 @@ const App = () => (
             <Route path="/add-event" element={<AddEvent />} />
             <Route path="/my-events" element={<MyEvents />} />
             <Route path="/my-invites" element={<MyInvites />} />
+            <Route path="/recommendations" element={<Recommendations />} />
             <Route path="/add-hotel" element={<AddHotel />} />
             <Route path="/all-events" element={<AllEvents />} />
             <Route path="/organizer-dashboard" element={<OrganizerDashboard />} />

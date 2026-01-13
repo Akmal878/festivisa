@@ -6,12 +6,16 @@ import { useAuth } from '@/lib/auth';
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false);
-  const { user, role, signOut } = useAuth();
+  const { user, role, signOut, loading } = useAuth();
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
-    await signOut();
-    navigate('/');
+    try {
+      await signOut();
+      navigate('/');
+    } catch (error) {
+      console.error('Sign out error:', error);
+    }
   };
 
   return (
@@ -26,7 +30,7 @@ export function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
-            {user && role === 'user' && (
+            {!loading && user && role === 'user' && (
               <>
                 <Link to="/add-event" className="text-sm font-medium text-white/70 hover:text-primary transition-colors">
                   Add Event
@@ -34,12 +38,15 @@ export function Header() {
                 <Link to="/my-events" className="text-sm font-medium text-white/70 hover:text-primary transition-colors">
                   My Events
                 </Link>
+                <Link to="/recommendations" className="text-sm font-medium text-white/70 hover:text-primary transition-colors">
+                  Recommendations
+                </Link>
                 <Link to="/my-invites" className="text-sm font-medium text-white/70 hover:text-primary transition-colors">
                   Invites
                 </Link>
               </>
             )}
-            {user && role === 'organizer' && (
+            {!loading && user && role === 'organizer' && (
               <>
                 <Link to="/organizer-dashboard" className="text-sm font-medium text-white/70 hover:text-primary transition-colors">
                   Dashboard
@@ -58,7 +65,7 @@ export function Header() {
                 </Link>
               </>
             )}
-            {user && (
+            {!loading && user && (
               <Link to="/chats" className="text-sm font-medium text-white/70 hover:text-primary transition-colors">
                 Messages
               </Link>
@@ -67,9 +74,9 @@ export function Header() {
 
           {/* Desktop Auth */}
           <div className="hidden md:flex items-center gap-4">
-            {user ? (
+            {!loading && user ? (
               <div className="flex items-center gap-4">
-                {role === 'user' && (
+                {!loading && role === 'user' && (
                   <Link to="/profile" className="flex items-center gap-2 text-sm text-white/70 hover:text-primary transition-colors">
                     <User className="w-4 h-4" />
                     <span>Profile</span>
@@ -110,7 +117,7 @@ export function Header() {
         {isOpen && (
           <div className="md:hidden py-4 border-t border-white/10 animate-fade-in">
             <nav className="flex flex-col gap-4">
-              {user && role === 'user' && (
+              {!loading && user && role === 'user' && (
                 <>
                   <Link to="/add-event" className="text-sm font-medium text-white/70 hover:text-primary" onClick={() => setIsOpen(false)}>
                     Add Event
@@ -118,12 +125,15 @@ export function Header() {
                   <Link to="/my-events" className="text-sm font-medium text-white/70 hover:text-primary" onClick={() => setIsOpen(false)}>
                     My Events
                   </Link>
+                  <Link to="/recommendations" className="text-sm font-medium text-white/70 hover:text-primary" onClick={() => setIsOpen(false)}>
+                    Recommendations
+                  </Link>
                   <Link to="/my-invites" className="text-sm font-medium text-white/70 hover:text-primary" onClick={() => setIsOpen(false)}>
                     Invites
                   </Link>
                 </>
               )}
-              {user && role === 'organizer' && (
+              {!loading && user && role === 'organizer' && (
                 <>
                   <Link to="/organizer-dashboard" className="text-sm font-medium text-white/70 hover:text-primary" onClick={() => setIsOpen(false)}>
                     Dashboard
@@ -142,19 +152,19 @@ export function Header() {
                   </Link>
                 </>
               )}
-              {user && (
+              {!loading && user && (
                 <>
                   <Link to="/chats" className="text-sm font-medium text-white/70 hover:text-primary" onClick={() => setIsOpen(false)}>
                     Messages
                   </Link>
-                  {role === 'user' && (
+                  {!loading && role === 'user' && (
                     <Link to="/profile" className="text-sm font-medium text-white/70 hover:text-primary" onClick={() => setIsOpen(false)}>
                       My Profile
                     </Link>
                   )}
                 </>
               )}
-              {user ? (
+              {!loading && user ? (
                 <Button 
                   variant="ghost" 
                   size="sm" 

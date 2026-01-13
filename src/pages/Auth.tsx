@@ -93,14 +93,16 @@ export default function Auth() {
   });
 
   useEffect(() => {
-    if (user && role) {
+    console.log('Auth page effect:', { loading, user: !!user, role });
+    if (!loading && user && role) {
+      console.log('Redirecting user, role:', role);
       if (role === 'organizer') {
         navigate('/organizer-dashboard');
       } else {
         navigate('/');
       }
     }
-  }, [user, role, navigate]);
+  }, [user, role, loading, navigate]);
 
   const handleLogin = async (data: LoginForm) => {
     setIsLoading(true);
@@ -126,7 +128,7 @@ export default function Auth() {
 
   const handleSignup = async (data: SignupForm) => {
     setIsLoading(true);
-    const { error } = await signUp(data.email, data.password, {
+    const { data: signUpData, error } = await signUp(data.email, data.password, {
       full_name: data.full_name,
       phone: data.phone,
       address: data.address,
@@ -145,12 +147,25 @@ export default function Auth() {
       });
       setIsLoading(false);
     } else {
-      // Redirect to email verification page
-      navigate('/verify-email');
+      // Check if email confirmation is required
+      const confirmationRequired = signUpData?.user?.identities?.length === 0;
+      
+      if (confirmationRequired) {
+        // Email confirmation is required - redirect to verify email page
+        navigate('/verify-email');
+      } else {
+        // No email confirmation needed - show success and let auth redirect
+        toast({
+          title: 'Account Created!',
+          description: 'Welcome to Festivisa! Your account has been created.',
+        });
+        // The useEffect will handle redirect based on role
+      }
     }
   };
 
   if (loading) {
+    console.log('Auth page: loading state');
     return (
       <Layout showFooter={false}>
         <div className="min-h-[calc(100vh-5rem)] flex items-center justify-center">
@@ -159,6 +174,8 @@ export default function Auth() {
       </Layout>
     );
   }
+
+  console.log('Auth page rendering form, user:', !!user, 'role:', role);
 
   return (
     <Layout showFooter={false}>

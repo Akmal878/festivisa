@@ -1,0 +1,8 @@
+# Python Recommendation Service
+
+venv/
+*.pyc
+__pycache__/
+.env
+*.log
+.DS_Store
