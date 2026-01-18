@@ -107,7 +107,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       role: AppRole;
     }
   ) => {
-    const redirectUrl = `${window.location.origin}/`;
+    // Use VITE_SITE_URL for production, fallback to window.location.origin for development
+    const siteUrl = import.meta.env.VITE_SITE_URL || window.location.origin;
+    const redirectUrl = `${siteUrl}/`;
     
     const { data, error } = await supabase.auth.signUp({
       email,

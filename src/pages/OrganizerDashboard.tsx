@@ -101,6 +101,9 @@ export default function OrganizerDashboard() {
       console.error('Error fetching stats:', error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
   const handleDeleteVenue = async () => {
     if (!hotelToDelete) return;
 
@@ -130,9 +133,6 @@ export default function OrganizerDashboard() {
     } finally {
       setDeleteDialogOpen(false);
       setHotelToDelete(null);
-    }
-  };
-
     }
   };
 
@@ -235,25 +235,12 @@ export default function OrganizerDashboard() {
                 <Link to="/add-hotel">
                   <Button className="btn-gold gap-2">
                     <Plus className="w-5 h-5" />
-                    Adddiv className="flex gap-2">
-                        <Link to={`/add-hotel?edit=${hotel.id}`} className="flex-1">
-                          <Button variant="outline" className="w-full gap-2">
-                            <Edit className="w-4 h-4" />
-                            Edit
-                          </Button>
-                        </Link>
-                        <Button 
-                          variant="outline" 
-                          className="gap-2 text-destructive hover:text-destructive hover:bg-destructive/10"
-                          onClick={() => {
-                            setHotelToDelete(hotel);
-                            setDeleteDialogOpen(true);
-                          }}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                          Delete
-                        </Button>
-                      </div="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    Add Your First Venue
+                  </Button>
+                </Link>
+              </Card>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {hotels.map((hotel) => (
                   <Card key={hotel.id} className="card-wedding overflow-hidden group hover:shadow-lg transition-shadow">
                     <div className="relative h-48 bg-muted overflow-hidden">
@@ -280,12 +267,30 @@ export default function OrganizerDashboard() {
                           {hotel.description}
                         </p>
                       )}
-                      <Link to={`/add-hotel?edit=${hotel.id}`}>
-                        <Button variant="outline" className="w-full gap-2">
-                          <Edit className="w-4 h-4" />
-                          Edit Venue
+                      {hotel.description && (
+                        <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+                          {hotel.description}
+                        </p>
+                      )}
+                      <div className="flex gap-2">
+                        <Link to={`/add-hotel?edit=${hotel.id}`} className="flex-1">
+                          <Button variant="outline" className="w-full gap-2">
+                            <Edit className="w-4 h-4" />
+                            Edit
+                          </Button>
+                        </Link>
+                        <Button 
+                          variant="outline" 
+                          className="gap-2 text-destructive hover:text-destructive hover:bg-destructive/10"
+                          onClick={() => {
+                            setHotelToDelete(hotel);
+                            setDeleteDialogOpen(true);
+                          }}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                          Delete
                         </Button>
-                      </Link>
+                      </div>
                     </div>
                   </Card>
                 ))}
